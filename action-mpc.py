@@ -40,10 +40,23 @@ def action_wrapper(hermes, intentMessage, conf):
     Refer to the documentation for further details. 
     """ 
     import subprocess
-    command=intentMessage.slots.player.first().value
-    #print(command) 
-    subprocess.call( "mpc "+command, shell=True)
-    hermes.publish_end_session(intentMessage.session_id,"")  
+    
+    try:
+        command=intentMessage.slots.player.first().value
+        subprocess.call( "mpc "+command, shell=True)
+        hermes.publish_end_session(intentMessage.session_id,"")  
+    except:
+        print("Error with command")
+        #hermes.publish_end_session(intentMessage.session_id,"Fehler")
+    try:
+        playlist=intentMessage.slots.load_list.first().value
+        subprocess.call( "mpc clear", shell=True)
+        subprocess.call( "mpc "+playlist, shell=True)
+        subprocess.call( "mpc play", shell=True)
+        hermes.publish_end_session(intentMessage.session_id,"")  
+    except:
+        print("Error with playlist")
+        #hermes.publish_end_session(intentMessage.session_id,"Fehler")
 
 
 if __name__ == "__main__":
